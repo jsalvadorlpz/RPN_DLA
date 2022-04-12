@@ -1,0 +1,11 @@
+B^M^M
+^@^@^@^@ô­<b0^C^@^@ã^@^@^@^@^@^@^@^@^@^@^@^@^C^@^@^@@^@^@^@s^^^@^@^@d^@d^Al^@m^AZ^B^A^@e^Bd^B<9c>^Ad^Cd^D<84>^DZ^Cd^ES^@)^Fé^@^@^@^@)^AÚ^GCfgNode)^AÚ^Ccfgc^A^@^@^@^@^@^@^@^B^@^@^@^B^@^@^@C^@^@^@s|^@^@^@|^@}^At^@<83>^@|^Aj^A_^Bd^A|^Aj^Aj^B_^Ct^@<83>^@|^Aj^Aj^B_^Dd^B|^Aj^Aj^Bj^D_^Ed^C|^Aj^Aj^Bj^D_^Fd^D|^Aj^Aj^Bj^D_^Gt^@<83>^@|^Aj^Aj^B_^Hd^E|^Aj^Aj^Bj^H_^Ed^F|^Aj^Aj^Bj^H_^Fd^G|^Aj^Aj^Bj^H_^Gd^HS^@)  z<9e>
+    Add config for additional dataset options
+     - dataset name
+     - dataset json file (for train and test)
+     - dataset path (for train and test)
+    FZ^Pmy_dataset_trainz^Tinstances_train.jsonz^Q./datasets/train/Z^Omy_dataset_testz^Sinstances_test.jsonz^P./datasets/test/N)        Ú^BCNÚ^HDATASETSÚ^CDLAÚ^TREGISTER_NEW_DATASETÚ^ETRAINÚ^DNAMEÚ^DJSONÚ^DPATHÚ^DTEST)^Br^C^@^@^@Ú^B_C©^@r^N^@^@^@úK/home/jsalvador/RPN_DLA/detectron2/projects/vovnet-detectron2/dla/config.pyÚ^Radd_dataset_config^G^@^@^@s^V^@^@^@^@^G^D^A
+^A
+^A^L^A^L^A^L^A^L^A^L^A^L^A^L^Ar^P^@^@^@N)^DÚ^Qdetectron2.configr^B^@^@^@r^D^@^@^@r^P^@^@^@r^N^@^@^@r^N^@^@^@r^N^@^@^@r^O^@^@^@Ú^H<module>^D^@^@^@s^B^@^@^@^L^C
+~                                                                                                       
+~                 
