@@ -1,0 +1,7 @@
+_BASE_: "Base-Panoptic-FPN.yaml"
+MODEL:
+  WEIGHTS: "https://www.dropbox.com/s/8xl0cb3jj51f45a/vovnet57_ese_detectron2.pth?dl=1"
+SOLVER:
+  STEPS: (60000, 80000)
+  MAX_ITER: 90000
+OUTPUT_DIR: "checkpoints/MobileNet_V2-FPN"
