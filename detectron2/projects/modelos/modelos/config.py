@@ -1,23 +1,23 @@
 from detectron2.config import CfgNode as CN
 
 
-def add_vovnet_config(cfg):
+def add_mobilnetv2_config(cfg):
     """
     Add config for VoVNet.
     """
     _C = cfg
 
-    _C.MODEL.VOVNET = CN()
+    _C.MODEL.MNV2 = CN()
 
-    _C.MODEL.VOVNET.CONV_BODY = "V-39-eSE"
-    _C.MODEL.VOVNET.OUT_FEATURES = ["stage2", "stage3", "stage4", "stage5"]
+    //_C.MODEL.MNV2.CONV_BODY = "V-39-eSE"
+    _C.MODEL.MNV2.OUT_FEATURES = ["stage2", "stage3", "stage4", "stage5"]
 
     # Options: FrozenBN, GN, "SyncBN", "BN"
-    _C.MODEL.VOVNET.NORM = "FrozenBN"
+    _C.MODEL.MNV2.NORM = "FrozenBN"
 
-    _C.MODEL.VOVNET.OUT_CHANNELS = 256
+    _C.MODEL.MNV2.OUT_CHANNELS = 256
 
-    _C.MODEL.VOVNET.BACKBONE_OUT_CHANNELS = 256
+    _C.MODEL.MNV2.BACKBONE_OUT_CHANNELS = 256
 
     _C = cfg
 
