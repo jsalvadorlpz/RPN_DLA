@@ -19,7 +19,7 @@ from detectron2.evaluation import (
     DatasetEvaluators,
     verify_results
     )
-from vovnet import add_mobilnetv2_config
+from dla import add_dataset_config
 
 
 
@@ -93,7 +93,7 @@ def setup(args):
     Create configs and perform basic setups.
     """
     cfg = get_cfg()
-    add_mobilnetv2_config(cfg)
+    add_dataset_config(cfg)
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
     cfg.freeze()
