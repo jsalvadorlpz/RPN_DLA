@@ -1,4 +1,4 @@
-_BASE_: "Base-Panoptic-FPN.yaml"
+_BASE_: "Base-RCNN-Mobilenet-FPN.yaml"
 MODEL:
   WEIGHTS: "https://www.dropbox.com/s/8xl0cb3jj51f45a/vovnet57_ese_detectron2.pth?dl=1"
 SOLVER:
