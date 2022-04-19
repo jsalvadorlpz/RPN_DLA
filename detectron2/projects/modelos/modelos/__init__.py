@@ -1,2 +1,2 @@
-from .config import add_mobilnetv2_config
-from .mobilenet import build_mobilenetv2_fpn_backbone, build_mnv2_backbone
+from .config import add_modelo1_config
+from .mobilenet import build_modelo1_fpn_backbone, build_modelo1_backbone
