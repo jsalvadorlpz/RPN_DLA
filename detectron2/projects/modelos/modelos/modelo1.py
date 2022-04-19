@@ -8,10 +8,10 @@ from detectron2.modeling.backbone import Backbone
 from detectron2.modeling.backbone.build import BACKBONE_REGISTRY
 from detectron2.modeling.backbone.fpn import FPN, LastLevelMaxPool
 
-def block1():
+def block1(in_ch):
     # Block 1
     block1= nn.Sequential(
-    nn.Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1'),
+    nn.Conv2D(in_ch, (3, 3), activation='relu', padding='same', name='block1_conv1'),
     nn.BatchNorm2d(64),
     nn.Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv2'),
     nn.BatchNorm2d(64),
@@ -76,26 +76,62 @@ def block4():
     return block5
 
 class modelo1(Backbone):
-   def __init__(self, stem, stages, num_classes=None, out_features=None, freeze_at=0):
-     super().__init__()
-     self.stem = stem
-     self.num_classes = num_classes
-     current_stride = self.stem.stride
-     self._out_feature_strides = {"stem": current_stride}
-     self._out_feature_channels = {"stem": self.stem.out_channels}
-      
+   def __init__(self, cfg, in_ch, out_features=None):
+     super(modelo1,self).__init__()
+     global _NORM
+     _NORM = cfg.MODEL.MODELO.NORM
+     self._out_features = out_features   
+     #current_stride = self.stem.stride
+     #self._out_feature_strides = {"stem": current_stride}
+     #self._out_feature_channels = {"stem": self.stem.out_channels}
+     self.block1 =block1(in_ch)
+     self.block2=block2()
+     self.block3=block3()
+     self.block4=block4()
+     self.block5=block5()
+     self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+     self.linear = nn.Linear(512, num_classes)
      
-      
-   
-    x = GlobalMaxPooling2D()(x)
+     stem = block1(in_ch)
+     stem += block2()
+     stem += block3()
+     stem += block4()
+     stem += block5()
+        
+     self._initialize_weights()
     
+   def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight)
+    
+   def forward(self, x):
+        outputs= {}
+        x=self.block1(x)
+        x2= self.block2(x)
+        x3= self.block3(x2)
+        x4=self.block4(x3)
+        x5=self.block5(x4)
+        outputs = {"stage2":x2, "stage3":x3,"stage4":x4,"stage5":x5}
+        
+        if self.num_classes is not None:
+           x = self.avgpool(x)
+           x = torch.flatten(x, 1)
+           x = self.linear(x)
+           outputs["linear"] = x
+        return outputs
+
+        
+        
+    def output_shape(self):
+        return {
+            name: ShapeSpec(
+                channels=self._out_feature_channels[name], stride=self._out_feature_strides[name]
+            )
+            for name in self._out_features
+        }
 @BACKBONE_REGISTRY.register()    
 def build_modelo1_backbone(cfg, input_shape):
-    """
-    Create a VoVNet instance from config.
-    Returns:
-        VoVNet: a :class:`VoVNet` instance.
-    """
     out_features = cfg.MODEL.MODELO.OUT_FEATURES
     return Modelo1(cfg, input_shape.channels, out_features=out_features)
 
