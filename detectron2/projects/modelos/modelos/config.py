@@ -1,7 +1,7 @@
 from detectron2.config import CfgNode as CN
 
 
-def add_mobilnetv2_config(cfg):
+def add_modelo1_config(cfg):
     """
     Add config for VoVNet.
     """
