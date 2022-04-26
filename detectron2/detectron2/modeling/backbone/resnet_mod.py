@@ -601,7 +601,7 @@ def make_stage(*args, **kwargs):
 
 
 @BACKBONE_REGISTRY.register()
-def build_resnet_backbone(cfg, input_shape):
+def build_resnet_mod_backbone(cfg, input_shape):
     """
     Create a ResNet instance from config.
     Returns:
