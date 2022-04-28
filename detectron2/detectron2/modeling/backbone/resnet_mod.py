@@ -50,7 +50,7 @@ class BasicBlock(CNNBlockBase):
             self.shortcut = Conv2d(
                 in_channels,
                 out_channels,
-                kernel_size=3,
+                kernel_size=1,
                 stride=stride,
                 bias=False,
                 norm=get_norm(norm, out_channels),
@@ -133,7 +133,7 @@ class BottleneckBlock(CNNBlockBase):
             self.shortcut = Conv2d(
                 in_channels,
                 out_channels,
-                kernel_size=3,
+                kernel_size=1,
                 stride=stride,
                 bias=False,
                 norm=get_norm(norm, out_channels),
@@ -149,8 +149,8 @@ class BottleneckBlock(CNNBlockBase):
         self.conv1 = Conv2d(
             in_channels,
             bottleneck_channels,
-            kernel_size=3,
-            stride=stride_3x3,
+            kernel_size=1,
+            stride=stride_1x1,
             bias=False,
             norm=get_norm(norm, bottleneck_channels),
         )
@@ -170,7 +170,7 @@ class BottleneckBlock(CNNBlockBase):
         self.conv3 = Conv2d(
             bottleneck_channels,
             out_channels,
-            kernel_size=3,
+            kernel_size=1,
             bias=False,
             norm=get_norm(norm, out_channels),
         )
@@ -237,7 +237,7 @@ class DeformBottleneckBlock(CNNBlockBase):
             self.shortcut = Conv2d(
                 in_channels,
                 out_channels,
-                kernel_size=3,
+                kernel_size=1,
                 stride=stride,
                 bias=False,
                 norm=get_norm(norm, out_channels),
@@ -250,8 +250,8 @@ class DeformBottleneckBlock(CNNBlockBase):
         self.conv1 = Conv2d(
             in_channels,
             bottleneck_channels,
-            kernel_size=3,
-            stride=stride_3x3,
+            kernel_size=1,
+            stride=stride_1x1,
             bias=False,
             norm=get_norm(norm, bottleneck_channels),
         )
@@ -288,7 +288,7 @@ class DeformBottleneckBlock(CNNBlockBase):
         self.conv3 = Conv2d(
             bottleneck_channels,
             out_channels,
-            kernel_size=3,
+            kernel_size=1,
             bias=False,
             norm=get_norm(norm, out_channels),
         )
@@ -344,9 +344,9 @@ class BasicStem(CNNBlockBase):
         self.conv1 = Conv2d(
             in_channels,
             out_channels,
-            kernel_size=3,
+            kernel_size=7,
             stride=2,
-            padding=0,
+            padding=3,
             bias=False,
             norm=get_norm(norm, out_channels),
         )
@@ -357,7 +357,28 @@ class BasicStem(CNNBlockBase):
         x = F.relu_(x)
         x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
         return x
+class BasicStemMod(CNNBlockBase):
+    def __init__(self, in_channels=3, out_channels=64, norm="BN"):
+        super().__init__(in_channels, out_channels, 4)
+        
+        self.in_channels = in_channels
+        self.conv1 = Conv2d(in_channels,32,kernel_size=3,stride=2,padding=1,bias=False,norm=get_norm(norm, out_channels),)
+        weight_init.c2_msra_fill(self.conv1)
+        self.conv2 = Conv2d(32,32,kernel_size=3,stride=2,padding=1,bias=False,norm=get_norm(norm, out_channels),)
+        weight_init.c2_msra_fill(self.conv1)
+        self.conv3 = Conv2d(32,out_channels,kernel_size=3,stride=2,padding=1,bias=False,norm=get_norm(norm, out_channels),)
+        weight_init.c2_msra_fill(self.conv1)
 
+    def forward(self, x):
+        x = self.conv1(x)
+        x = F.relu_(x)
+        x = self.conv2(x)
+        x = F.relu_(x)
+        x = self.conv3(x)
+        x = F.relu_(x)
+        x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
+        return x
+        
 
 class ResNet(Backbone):
     """
@@ -558,7 +579,7 @@ class ResNet(Backbone):
         num_blocks_per_stage = {
             18: [2, 2, 2, 2],
             34: [3, 4, 6, 3],
-            50: [3, 4, 6, 3],
+            50: [3, 3, 3, 3],
             101: [3, 4, 23, 3],
             152: [3, 8, 36, 3],
         }[depth]
@@ -568,8 +589,8 @@ class ResNet(Backbone):
             in_channels = [64, 64, 128, 256]
             out_channels = [64, 128, 256, 512]
         else:
-            in_channels = [64, 256, 512, 1024]
-            out_channels = [256, 512, 1024, 2048]
+            in_channels = [64, 256, 256, 512]
+            out_channels = [256, 256, 512, 512]
         ret = []
         for (n, s, i, o) in zip(num_blocks_per_stage, [1, 2, 2, 2], in_channels, out_channels):
             if depth >= 50:
@@ -601,7 +622,7 @@ def make_stage(*args, **kwargs):
 
 
 @BACKBONE_REGISTRY.register()
-def build_resnet_mod_backbone(cfg, input_shape):
+def build_resnet_backbone(cfg, input_shape):
     """
     Create a ResNet instance from config.
     Returns:
@@ -609,7 +630,7 @@ def build_resnet_mod_backbone(cfg, input_shape):
     """
     # need registration of new blocks/stems?
     norm = cfg.MODEL.RESNETS.NORM
-    stem = BasicStem(
+    stem = BasicStemMod(
         in_channels=input_shape.channels,
         out_channels=cfg.MODEL.RESNETS.STEM_OUT_CHANNELS,
         norm=norm,
@@ -635,7 +656,7 @@ def build_resnet_mod_backbone(cfg, input_shape):
     num_blocks_per_stage = {
         18: [2, 2, 2, 2],
         34: [3, 4, 6, 3],
-        50: [3, 4, 6, 3],
+        50: [3, 3, 3, 3],
         101: [3, 4, 23, 3],
         152: [3, 8, 36, 3],
     }[depth]
