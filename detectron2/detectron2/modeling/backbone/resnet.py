@@ -325,6 +325,46 @@ class DeformBottleneckBlock(CNNBlockBase):
         out += shortcut
         out = F.relu_(out)
         return out
+class BasicStemMod2(CNNBlockBase):
+    """
+    The standard ResNet stem (layers before the first residual block),
+    with a conv, relu and max_pool.
+    """
+
+    def __init__(self, in_channels=3, out_channels=64, norm="BN"):
+        """
+        Args:
+            norm (str or callable): norm after the first conv layer.
+                See :func:`layers.get_norm` for supported format.
+        """
+        super().__init__(in_channels, out_channels, 4)
+        self.in_channels = in_channels
+        self.conv1 = Conv2d(in_channels,32,kernel_size=3,stride=2,padding=1,bias=False,
+            norm=get_norm(norm, out_channels),
+        )
+        weight_init.c2_msra_fill(self.conv1)
+        self.conv2 = Conv2d(32,32,kernel_size=3,stride=1,padding=1,bias=False,
+            norm=get_norm(norm, out_channels),
+        )
+        weight_init.c2_msra_fill(self.conv2)
+        
+        self.conv3 = Conv2d(32,out_channels,kernel_size=3,stride=1,padding=1,bias=False,
+            norm=get_norm(norm, out_channels),
+        )
+        weight_init.c2_msra_fill(self.conv3)
+        
+        
+        
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = F.relu_(x)
+        x = self.conv2(x)
+        x = F.relu_(x)
+         x = self.conv3(x)
+        x = F.relu_(x)
+        x = F.max_pool2d(x, kernel_size=3, stride=1, padding=1)
+        return x
 
 
 class BasicStem(CNNBlockBase):
@@ -344,7 +384,7 @@ class BasicStem(CNNBlockBase):
         self.conv1 = Conv2d(
             in_channels,
             out_channels,
-            kernel_size=7,
+            kernel_size=7,:q
             stride=2,
             padding=3,
             bias=False,
